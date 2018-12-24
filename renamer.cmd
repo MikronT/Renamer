@@ -1,6 +1,10 @@
 @echo off
 chcp 65001
-cd Files
+
+%~d0
+cd %~dp0
+if not exist files md files
+cd files
 
 
 
@@ -26,10 +30,10 @@ exit
 
 :logo
 mode con:cols=46 lines=18
-title [ADSI] Renamer
+title [MikronT] Renamer
 color 0b
 cls
 echo.
-echo.    [ADSI] ==^> Renamer
+echo.    [MikronT] ==^> Renamer
 echo.
 exit /b
