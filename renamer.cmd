@@ -1,10 +1,13 @@
 @echo off
-chcp 65001
+chcp 65001>nul
 
 %~d0
 cd %~dp0
+
 if not exist files md files
 cd files
+
+
 
 
 
