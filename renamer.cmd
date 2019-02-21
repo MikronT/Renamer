@@ -1,32 +1,39 @@
 @echo off
 chcp 65001>nul
 
-net session>nul 2>nul
-if %errorLevel% GEQ 1 goto :startAsAdmin
-
 %~d0
 cd %~dp0
-
-if not exist files md files
-cd files
 
 
 
 
 
 :start
+if not exist filesToRename md filesToRename
+cd filesToRename
+
+for /f "delims=" %%i in ('dir /a:-d /b') do set fileName_before_withExtension=%%i
+set fileName_before=%fileName_before_withExtension%
+
+
+
+
+
 call :logo
+set /p filename_prefix=^(^>^) Enter prefix ^> 
+set /p filename_suffix=^(^>^) Enter suffix ^> 
 
-set /p prefix=^(^>^) Enter Prefix ^> 
-set /p suffix=^(^>^) Enter Suffix ^> 
 
+
+call :logo
+echo.^(i^) Changes:
+echo.    - before: %fileName_before%
+echo.    - after:  %filename_prefix%%fileName_before%%filename_suffix%
 echo.
-echo.^(^i^) New Files Names: %prefix% FileName %suffix%
-set answer=null
-set /p answer=^(?^) All is OK? ^(y/n^) ^> 
-if "%answer%" NEQ "y" goto start
+choice /c yn /n /m "(?) Is all are OK? (Y/N) > "
+if "%errorLevel%" == "2" goto :start
 
-for %%i in (*) do rename "%%i" "%prefix% %%i %suffix%"
+for /f "delims=" %%i in ('dir /a:-d /b') do rename "%%i" "%filename_prefix%%%i%filename_suffix%"
 exit
 
 
@@ -34,7 +41,7 @@ exit
 
 
 :logo
-mode con:cols=46 lines=18
+mode con:cols=66 lines=26
 title [MikronT] Renamer
 color 0b
 cls
@@ -48,12 +55,3 @@ echo.
 echo.
 echo.
 exit /b
-
-
-
-
-
-:startAsAdmin
-echo.^(^!^) Please, run as Admin^!
-timeout /nobreak /t 3 >nul
-exit
