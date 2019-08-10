@@ -18,6 +18,8 @@ set fileName_suffix=
 set fileName_find=
 set fileName_replace=
 
+if not exist files md files
+
 
 
 call :logo
@@ -104,7 +106,6 @@ exit /b
 
 
 :getFileNames
-if not exist files md files
 if not exist temp md temp
 for %%i in (temp\fileNames_old temp\fileNames_new temp\fileNames) do if exist "%%i" del /q "%%i"
 
