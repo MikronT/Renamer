@@ -109,12 +109,21 @@ exit /b
 if not exist temp md temp
 for %%i in (temp\fileNames_old temp\fileNames_new temp\fileNames) do if exist "%%i" del /q "%%i"
 
-for /f "delims=" %%i in ('dir /a:-d /b files') do echo.%%i>>temp\fileNames_old
+for /f "delims=" %%i in ('dir /a:-d /b /s files') do (
+  set fileName_old=%%i
+  set "fileName_old=!fileName_old:%~dp0files\=!"
+  echo.!fileName_old!>>temp\fileNames_old
+)
 
 for /f "delims=" %%i in (temp\fileNames_old) do (
-  if "%change%" == "add" echo.%fileName_prefix%%%i%fileName_suffix%>>temp\fileNames_new
+  set fileName_new=%%i
+  set "fileName_new=!fileName_new: =:!"
+  set "fileName_new=!fileName_new:\= !"
+  for %%z in (!fileName_new!) do set fileName=%%z
+
+  if "%change%" == "add" echo.%fileName_prefix%!fileName!%fileName_suffix%>>temp\fileNames_new
   if "%change%" == "replace" (
-    set fileName_new=%%i
+    set fileName_new=!fileName!
     set "fileName_new=!fileName_new:%fileName_find%=%fileName_replace%!"
     echo.!fileName_new!>>temp\fileNames_new
   )
