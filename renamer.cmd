@@ -5,6 +5,7 @@ chcp 65001>nul
 cd %~dp0
 
 set app_name=Renamer
+set app_version=v1.0
 
 set getFileNames=call :getFileNames
 
@@ -104,13 +105,14 @@ goto :changes
 
 
 :logo
-title [MikronT] Renamer
 mode con:cols=110 lines=30
+title [MikronT] %app_name% %app_version%
 color 0b
 cls
 echo.
 echo.
 echo.    [MikronT] ==^> %app_name%
+echo.                  %app_version%
 echo.   ━━━━━━━━━━━━━━━━━━━━━━━━━
 echo.     See other here:
 echo.         github.com/MikronT
