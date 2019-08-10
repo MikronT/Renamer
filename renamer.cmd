@@ -8,11 +8,15 @@ set app_name=Renamer
 
 set getFileNames=call :getFileNames
 
-
-
 setlocal EnableDelayedExpansion
 
+
+
+
+
 :main
+set command=
+
 set fileName_prefix=
 set fileName_suffix=
 set fileName_find=
@@ -26,52 +30,70 @@ call :logo
 echo.^(^?^) Select option:
 echo.    ^(1^) Add
 echo.    ^(2^) Find and Replace
+echo.    ^(3^) Open files directory
 echo.
 echo.
 echo.
-choice /c 12 /n /m " > "
+set /p command=^> 
 
 
 
-if "%errorLevel%" == "1" (
+if "%command%" == "1" (
   set /p fileName_prefix=^(^>^) Enter addition prefix ^> 
   set /p fileName_suffix=^(^>^) Enter addition suffix ^> 
   set change=add
 )
-if "%errorLevel%" == "2" (
+if "%command%" == "2" (
   set /p fileName_find=^(^>^) Enter search keyworld ^> 
   set /p fileName_replace=^(^>^) Enter replacement ^> 
   set change=replace
 )
+if "%command%" == "3" ( start "" explorer "%~dp0files"
+) else (
+  %getFileNames%
+  goto :changes
+)
+goto :main
 
 
 
-%getFileNames%
 
 
+
+
+
+
+:changes
+set command=
 
 call :logo
 echo.^(i^) Changes:
 echo.
-echo.
 
 set counter=0
-for /f "tokens=1,2,* delims=;" %%i in (temp\fileNames) do (
-  set /a counter+=1
-  if !counter! LEQ 5 echo.     %%i   ==^>   %%j
-)
+if exist temp\fileNames (
+  for /f "tokens=1,2,* delims=;" %%i in (temp\fileNames) do (
+    set /a counter+=1
+    if !counter! LEQ 5 echo.     %%i   ==^>   %%j
+  )
+) else echo.    ^(^^!^) No files found^^! Move them into the files directory
 
 echo.
 echo.
+echo.    ^(1^) Run renaming
+echo.    ^(2^) Cancel/Change properties
+echo.    ^(3^) Open files directory
 echo.
-choice /c yn /n /m "(?) Are all OK? (Y/N) > "
+echo.
+echo.
+set /p command=^> 
 
 
 
-if "%errorLevel%" == "2" goto :main
-
-for /f "tokens=1,2,* delims=;" %%i in (temp\fileNames) do rename "files\%%i" "%%j"
-goto :main
+if "%command%" == "1" if exist temp\fileNames for /f "tokens=1,2,* delims=;" %%i in (temp\fileNames) do rename "files\%%i" "%%j"
+if "%command%" == "2" goto :main
+if "%command%" == "3" start "" explorer "%~dp0files"
+goto :changes
 
 
 
@@ -114,6 +136,8 @@ for /f "delims=" %%i in ('dir /a:-d /b /s files') do (
   set "fileName_old=!fileName_old:%~dp0files\=!"
   echo.!fileName_old!>>temp\fileNames_old
 )
+
+if not exist temp\fileNames_old exit /b
 
 for /f "delims=" %%i in (temp\fileNames_old) do (
   set fileName_new=%%i
