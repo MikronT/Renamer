@@ -91,7 +91,10 @@ set /p command=^>
 
 
 
-if "%command%" == "1" if exist temp\fileNames for /f "tokens=1,2,* delims=;" %%i in (temp\fileNames) do rename "files\%%i" "%%j"
+if "%command%" == "1" (
+  if exist temp\fileNames for /f "tokens=1,2,* delims=;" %%i in (temp\fileNames) do rename "files\%%i" "%%j"
+  goto :main
+)
 if "%command%" == "2" goto :main
 if "%command%" == "3" start "" explorer "%~dp0files"
 goto :changes
